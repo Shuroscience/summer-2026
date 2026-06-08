@@ -61,6 +61,11 @@
       "name": "Deebs",
       "color": "#FF6B00",
       "away": []
+    },
+    {
+      "name": "Jordy",
+      "color": "#FFE600",
+      "away": []
     }
   ]
 }
