@@ -26,6 +26,11 @@
       "color": "#00F5FF",
       "away": [
         {
+          "start": "2026-06-19",
+          "end": "2026-06-21",
+          "label": "Hamptons"
+        },
+        {
           "start": "2026-06-30",
           "end": "2026-07-13",
           "label": "Italy"
