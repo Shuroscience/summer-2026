@@ -26,8 +26,8 @@
       "color": "#00F5FF",
       "away": [
         {
-          "start": "2026-06-29",
-          "end": "2026-07-12",
+          "start": "2026-06-30",
+          "end": "2026-07-13",
           "label": "Italy"
         },
         {
@@ -50,7 +50,8 @@
           "end": "2026-09-07",
           "label": "Fire Island"
         }
-      ]
+      ],
+      "confirmed": true
     },
     {
       "name": "Geo",
