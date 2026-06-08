@@ -839,54 +839,41 @@
 
     const confirmed = state.people.filter(p => isConfirmed(p));
     const threshold = Math.min(3, confirmed.length);
-    const runs = [];
-    let runStart = null;
+
+    // Break whenever the exact set of in-town people changes
+    const windows = [];
+    let runStart = null, runKey = null;
 
     for (let i = 0; i < TOTAL_DAYS; i++) {
       const inTown = confirmed.filter(p => !isAway(p, i));
+      const key = inTown.map(p => p.name).sort().join(',');
       if (inTown.length >= threshold) {
-        if (runStart === null) runStart = i;
-      } else {
-        if (runStart !== null) {
-          runs.push({ start: runStart, end: i - 1 });
-          runStart = null;
+        if (key !== runKey) {
+          if (runStart !== null) windows.push({ start: runStart, end: i - 1, names: runKey.split(',') });
+          runStart = i; runKey = key;
         }
+      } else {
+        if (runStart !== null) { windows.push({ start: runStart, end: i - 1, names: runKey.split(',') }); runStart = null; runKey = null; }
       }
     }
-    if (runStart !== null) runs.push({ start: runStart, end: TOTAL_DAYS - 1 });
+    if (runStart !== null) windows.push({ start: runStart, end: TOTAL_DAYS - 1, names: runKey.split(',') });
 
-    // For each run, compute: who is there ALL days (core) and minimum daily count
-    const enriched = runs.map(run => {
-      let core = null;
-      let minCount = Infinity;
-      for (let i = run.start; i <= run.end; i++) {
-        const today = confirmed.filter(p => !isAway(p, i));
-        minCount = Math.min(minCount, today.length);
-        const names = new Set(today.map(p => p.name));
-        core = core === null ? names : new Set([...core].filter(n => names.has(n)));
-      }
-      return { ...run, core: [...(core || [])], minCount };
-    });
-    // All runs already guarantee minCount >= threshold — no extra filter needed
-
-    if (enriched.length === 0) {
+    if (windows.length === 0) {
       el.innerHTML = `<div class="no-hangouts">No windows with 3+ people in town yet — more dates coming soon!</div>`;
       return;
     }
 
-    enriched.sort((a,b) => a.start - b.start);
-    const top = enriched.slice(0, 12);
+    // Sort chronologically, no limit — show them all
+    windows.sort((a,b) => a.start - b.start);
+    const top = windows;
 
     let html = '';
     top.forEach(run => {
       const days = run.end - run.start + 1;
-      const isAll = run.minCount === confirmed.length;
-      const countCls = isAll ? 'all' : run.minCount >= 3 ? 'most' : 'some';
-      const countLabel = isAll
-        ? '🔥 EVERYONE IN TOWN'
-        : `At least ${run.minCount} of ${confirmed.length} in town every day`;
-      // Names to show: core (there the whole time); fall back to minCount label
-      const displayNames = run.core.length > 0 ? run.core : [];
+      const isAll = run.names.length === confirmed.length;
+      const countCls = isAll ? 'all' : run.names.length >= 3 ? 'most' : 'some';
+      const countLabel = isAll ? '🔥 EVERYONE IN TOWN' : `${run.names.length} of ${confirmed.length} in town`;
+      const displayNames = run.names;
       const startIso = isoFromIndex(run.start);
       const endIso   = isoFromIndex(run.end);
       const dateLabel = days === 1 ? formatDateLong(startIso) : `${formatDate(startIso)} – ${formatDate(endIso)}`;
@@ -900,9 +887,6 @@
       displayNames.forEach(name => {
         html += `<span class="hc-pill">${name}</span>`;
       });
-      if (run.core.length < run.minCount) {
-        html += `<span class="hc-pill" style="border-style:dashed;color:var(--mid)">+others rotating</span>`;
-      }
       html += `</div><div class="hc-duration">${days} day${days > 1 ? 's' : ''}</div>
         </div>
       </div>`;
