@@ -348,72 +348,56 @@
     background: #FFF5EE;
   }
 
-  /* ── HANGOUT SECTION ── */
-  .hangout-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 14px;
-  }
-  .hangout-card {
+  /* ── HANGOUT LIST ── */
+  .hangout-list {
     background: var(--white);
     border: 2px solid var(--ink);
     border-radius: 4px;
-    box-shadow: 3px 3px 0 var(--ink);
-    padding: 18px;
-    position: relative;
+    box-shadow: 4px 4px 0 var(--ink);
     overflow: hidden;
-    transition: transform .1s, box-shadow .1s;
   }
-  .hangout-card:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 5px 5px 0 var(--ink);
+  .hrow {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line);
+    border-left: 5px solid transparent;
+    transition: background .1s;
   }
-  .hangout-card .accent-stripe {
-    position: absolute; top: 0; left: 0; right: 0; height: 5px;
-    background: repeating-linear-gradient(90deg,
-      var(--cyan) 0px, var(--cyan) 16px,
-      var(--yellow) 16px, var(--yellow) 32px,
-      var(--pink) 32px, var(--pink) 48px
-    );
-  }
-  .hangout-card.hot .accent-stripe {
-    background: repeating-linear-gradient(90deg,
-      var(--pink) 0px, var(--pink) 16px,
-      var(--yellow) 16px, var(--yellow) 32px,
-      var(--orange) 32px, var(--orange) 48px
-    );
-  }
-  .hangout-card-inner { padding-top: 8px; }
+  .hrow:last-child { border-bottom: none; }
+  .hrow:hover { background: var(--bg); }
+  .hrow.cnt-3 { border-left-color: var(--cyan); }
+  .hrow.cnt-4 { border-left-color: var(--yellow); }
+  .hrow.cnt-5 { border-left-color: var(--orange); }
+  .hrow.cnt-all { border-left-color: var(--pink); }
 
-  .hc-dates {
+  .hrow-dates {
     font-family: 'Bangers', sans-serif;
-    font-size: 22px; color: var(--ink);
-    letter-spacing: .03em; margin-bottom: 6px;
+    font-size: 17px; letter-spacing: .03em;
+    color: var(--ink); white-space: nowrap;
+    min-width: 155px;
   }
-  .hc-count {
-    font-size: 10px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: .1em;
-    margin-bottom: 10px; font-family: 'Righteous', sans-serif;
+  .hrow-names {
+    display: flex; flex-wrap: wrap; gap: 4px; flex: 1;
   }
-  .hc-count.all  { color: var(--pink); }
-  .hc-count.most { color: var(--orange); }
-  .hc-count.some { color: var(--cyan); }
-  .hc-names { display: flex; flex-wrap: wrap; gap: 5px; }
   .hc-pill {
     font-size: 11px; font-weight: 700;
-    padding: 3px 10px; border-radius: 2px;
+    padding: 2px 9px; border-radius: 2px;
     border: 2px solid var(--ink);
     color: var(--ink); background: var(--bg);
     font-family: 'Righteous', sans-serif;
-    letter-spacing: .04em;
+    letter-spacing: .04em; white-space: nowrap;
   }
-  .hc-duration {
+  .hrow-duration {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; color: var(--mid); margin-top: 10px;
+    font-size: 10px; color: var(--mid);
+    white-space: nowrap; text-align: right;
+    min-width: 40px;
   }
   .no-hangouts {
-    grid-column: 1/-1; text-align: center;
-    color: var(--mid); font-size: 14px; padding: 24px;
+    text-align: center; color: var(--mid);
+    font-size: 14px; padding: 24px;
   }
 
   /* ── MODAL ── */
@@ -572,7 +556,7 @@
 
   <!-- HANGOUTS -->
   <div class="section-title">🎉 Plan a Hangout</div>
-  <div class="hangout-grid" id="hangout-grid"></div>
+  <div class="hangout-list" id="hangout-grid"></div>
 
   <div class="status-bar" id="status"></div>
 </div>
@@ -871,27 +855,26 @@
     top.forEach(run => {
       const days = run.end - run.start + 1;
       const isAll = run.names.length === confirmed.length;
-      const countCls = isAll ? 'all' : run.names.length >= 3 ? 'most' : 'some';
-      const countLabel = isAll ? '🔥 EVERYONE IN TOWN' : `${run.names.length} of ${confirmed.length} in town`;
-      const displayNames = run.names;
+      const n = run.names.length;
+      const rowCls = isAll ? 'hrow cnt-all' : n >= 5 ? 'hrow cnt-5' : n >= 4 ? 'hrow cnt-4' : 'hrow cnt-3';
       const startIso = isoFromIndex(run.start);
       const endIso   = isoFromIndex(run.end);
       const dateLabel = days === 1 ? formatDateLong(startIso) : `${formatDate(startIso)} – ${formatDate(endIso)}`;
+      const durationLabel = days === 1 ? '1 day' : `${days}d`;
 
-      html += `<div class="${isAll ? 'hangout-card hot' : 'hangout-card'}">
-        <div class="accent-stripe"></div>
-        <div class="hangout-card-inner">
-          <div class="hc-dates">${dateLabel}</div>
-          <div class="hc-count ${countCls}">${countLabel}</div>
-          <div class="hc-names">`;
-      displayNames.forEach(name => {
-        html += `<span class="hc-pill">${name}</span>`;
+      html += `<div class="${rowCls}">
+        <div class="hrow-dates">${dateLabel}</div>
+        <div class="hrow-names">`;
+      run.names.forEach(name => {
+        const p = state.people.find(x => x.name === name);
+        html += `<span class="hc-pill" style="border-color:${p?.color||'var(--ink)'}">${name}</span>`;
       });
-      html += `</div><div class="hc-duration">${days} day${days > 1 ? 's' : ''}</div>
-        </div>
+      if (isAll) html += `<span class="hc-pill" style="background:var(--pink);color:#fff;border-color:var(--pink)">🔥 everyone</span>`;
+      html += `</div>
+        <div class="hrow-duration">${durationLabel}</div>
       </div>`;
     });
-    el.innerHTML = html;
+    el.innerHTML = html || `<div class="no-hangouts">No windows with 3+ people in town yet.</div>`;
   }
 
   // ── Tooltip ──
