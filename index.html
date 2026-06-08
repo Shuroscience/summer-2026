@@ -57,13 +57,6 @@
   }
   .btn-primary:hover { opacity: .85; }
 
-  .btn-ghost {
-    background: none; color: var(--mid);
-    border: 1px solid var(--line); border-radius: 8px;
-    padding: 9px 14px; font-size: 13px; font-weight: 500;
-    cursor: pointer; white-space: nowrap; transition: all .15s; font-family: inherit;
-  }
-  .btn-ghost:hover { border-color: var(--ink); color: var(--ink); }
 
   /* Legend */
   .legend {
@@ -237,15 +230,6 @@
   }
   .btn-cancel:hover { border-color: var(--ink); color: var(--ink); }
 
-  /* Setup modal */
-  .setup-box {
-    background: #EFF6FF; border: 1px solid #BFDBFE;
-    border-radius: 10px; padding: 16px; margin-bottom: 20px;
-    font-size: 13px; line-height: 1.5;
-  }
-  .setup-box a { color: var(--accent); }
-  .setup-box ol { padding-left: 18px; margin-top: 8px; }
-  .setup-box li { margin-bottom: 4px; }
 
   /* Status */
   .status-bar {
@@ -271,7 +255,6 @@
       <p>Jun 8 – Sep 7, 2026 · When are we all in New York?</p>
     </div>
     <div class="header-btns">
-      <button class="btn-ghost" onclick="openTokenModal()" title="Set edit token">⚙ Token</button>
       <button class="btn-primary" onclick="openEditModal()">+ Update my dates</button>
     </div>
   </header>
@@ -327,37 +310,6 @@
   </div>
 </div>
 
-<!-- Token setup modal -->
-<div class="modal-overlay" id="token-overlay" onclick="handleOverlayClick(event,'token-overlay')">
-  <div class="modal">
-    <h2>Edit token</h2>
-    <p class="modal-sub">A GitHub token is needed to save changes. You only need to do this once.</p>
-
-    <div class="setup-box">
-      <strong>One-time setup (1 minute):</strong>
-      <ol>
-        <li>Go to <a href="https://github.com/settings/personal-access-tokens/new" target="_blank">github.com → Settings → Fine-grained tokens → Generate new</a></li>
-        <li>Name it anything (e.g. "summer calendar")</li>
-        <li>Under <strong>Repository access</strong> → Only select repositories → pick <strong>summer-2026</strong></li>
-        <li>Under <strong>Permissions → Contents</strong> → set to <strong>Read and write</strong></li>
-        <li>Click Generate, copy the token, paste it below</li>
-      </ol>
-    </div>
-
-    <div class="form-group">
-      <label>GitHub token</label>
-      <input type="password" id="token-input" placeholder="github_pat_…" autocomplete="off">
-    </div>
-    <p style="font-size:11px;color:var(--mid);margin-top:-8px;margin-bottom:20px">
-      Stored only in your browser. Never sent anywhere except GitHub's API.
-    </p>
-
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal('token-overlay')">Cancel</button>
-      <button class="btn-save" onclick="saveToken()">Save token</button>
-    </div>
-  </div>
-</div>
 
 <script>
   // ── Config ──
@@ -365,7 +317,6 @@
   const REPO_NAME  = 'summer-2026';
   const DATA_FILE  = 'data.json';
   const RAW_URL    = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${DATA_FILE}`;
-  const API_URL    = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE}`;
 
   const SUMMER_START = new Date(Date.UTC(2026, 5, 8));
   const SUMMER_END   = new Date(Date.UTC(2026, 8, 7));
@@ -373,11 +324,7 @@
   const PERSON_COLORS = ['#E85D75','#2DA89A','#7B5EA7','#E8873A','#3B82F6','#F59E0B'];
 
   let state = { people: [] };
-  let fileSha = null;
 
-  // ── Token storage ──
-  function getToken() { return localStorage.getItem('gh_token_summer26') || ''; }
-  function setTokenStorage(t) { localStorage.setItem('gh_token_summer26', t); }
 
   // ── Date utils ──
   function dayIndex(iso) {
@@ -415,43 +362,17 @@
 
   // ── Push ──
   async function pushData() {
-    const token = getToken();
-    if (!token) {
-      alert('You need to set an edit token first. Click the ⚙ Token button at the top right.');
-      return false;
-    }
     setStatus('Saving…', 'saving');
     try {
-      // Get current SHA if we don't have it
-      if (!fileSha) {
-        const metaRes = await fetch(API_URL, {
-          headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }
-        });
-        if (!metaRes.ok) throw new Error('Could not fetch file metadata: ' + metaRes.status);
-        const meta = await metaRes.json();
-        fileSha = meta.sha;
-      }
-
-      const content = btoa(unescape(encodeURIComponent(JSON.stringify(state, null, 2))));
-      const res = await fetch(API_URL, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/vnd.github+json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: 'Update calendar data',
-          content,
-          sha: fileSha
-        })
+      const res = await fetch('/.netlify/functions/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newData: state })
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || res.status);
+        throw new Error(err.error || res.status);
       }
-      const data = await res.json();
-      fileSha = data.content.sha;
       setStatus('Saved ✓');
       setTimeout(() => setStatus(''), 2500);
       return true;
@@ -728,24 +649,6 @@
     await pushData();
   }
 
-  // ── Token modal ──
-  function openTokenModal() {
-    const existing = getToken();
-    document.getElementById('token-input').value = existing ? '••••••••••••••••' : '';
-    document.getElementById('token-overlay').classList.add('open');
-  }
-
-  function saveToken() {
-    const val = document.getElementById('token-input').value.trim();
-    if (val && !val.startsWith('•')) {
-      setTokenStorage(val);
-      fileSha = null; // force re-fetch sha on next save
-    }
-    closeModal('token-overlay');
-    setStatus('Token saved ✓');
-    setTimeout(() => setStatus(''), 2000);
-  }
-
   // ── Shared modal helpers ──
   function closeModal(id) {
     document.getElementById(id).classList.remove('open');
@@ -755,12 +658,6 @@
   }
 
   // ── Init ──
-  if (!getToken()) {
-    // Prompt token setup on first load, but still fetch + render data
-    setTimeout(() => {
-      if (!getToken()) openTokenModal();
-    }, 800);
-  }
   fetchData();
 </script>
 </body>
