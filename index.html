@@ -749,7 +749,7 @@
       else if (inTown === 3) cls = 'ol3';
       else if (inTown === 2) cls = 'ol2';
       else if (inTown === 1) cls = 'ol1';
-      const names = state.people.filter(p => !isAway(p, i)).map(p => p.name).join(', ') || 'Everyone's away';
+      const names = state.people.filter(p => !isAway(p, i)).map(p => p.name).join(', ') || 'Everyone away';
       const tt = `${names} · ${formatDate(isoFromIndex(i))}`;
       html += `<div class="day-cell ${cls}" data-tt="${tt}"
         onmouseenter="showTT(event,this)" onmouseleave="hideTT()"></div>`;
