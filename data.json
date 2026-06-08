@@ -68,9 +68,19 @@
       "color": "#FFE600",
       "away": [
         {
+          "start": "2026-07-02",
+          "end": "2026-07-05",
+          "label": "Upstate"
+        },
+        {
           "start": "2026-07-18",
           "end": "2026-07-26",
           "label": "California"
+        },
+        {
+          "start": "2026-08-15",
+          "end": "2026-08-23",
+          "label": "Took the week off of day care so not sur"
         }
       ],
       "confirmed": true
