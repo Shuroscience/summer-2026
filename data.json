@@ -1,8 +1,32 @@
 {
   "people": [
     {
-      "name": "test",
-      "color": "#fff",
+      "name": "Caitlin",
+      "color": "#FF2D78",
+      "away": [
+        {"start": "2026-06-20", "end": "2026-06-28", "label": "Houston"},
+        {"start": "2026-08-06", "end": "2026-08-09", "label": "Michigan"}
+      ]
+    },
+    {
+      "name": "Luciana",
+      "color": "#00F5FF",
+      "away": [
+        {"start": "2026-06-29", "end": "2026-07-12", "label": "Italy"},
+        {"start": "2026-07-20", "end": "2026-07-26", "label": "Philadelphia"},
+        {"start": "2026-08-03", "end": "2026-08-09", "label": "Rhode Island"},
+        {"start": "2026-08-10", "end": "2026-08-16", "label": "Philadelphia"},
+        {"start": "2026-08-31", "end": "2026-09-07", "label": "Fire Island"}
+      ]
+    },
+    {
+      "name": "Geo",
+      "color": "#CC44FF",
+      "away": []
+    },
+    {
+      "name": "Deebs",
+      "color": "#FF6B00",
       "away": []
     }
   ]
