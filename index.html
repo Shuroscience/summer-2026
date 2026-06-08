@@ -556,7 +556,7 @@
   const REPO_OWNER = 'Shuroscience';
   const REPO_NAME  = 'summer-2026';
   const DATA_FILE  = 'data.json';
-  const RAW_URL    = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${DATA_FILE}`;
+  const READ_URL   = '/.netlify/functions/read';
 
   const SUMMER_START = new Date(Date.UTC(2026, 5, 8));
   const SUMMER_END   = new Date(Date.UTC(2026, 8, 7));
@@ -591,7 +591,7 @@
   async function fetchData() {
     setStatus('Loading…');
     try {
-      const res = await fetch(RAW_URL + '?cb=' + Date.now());
+      const res = await fetch(READ_URL);
       if (!res.ok) throw new Error(res.status);
       state = await res.json();
       render();
