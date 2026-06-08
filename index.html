@@ -840,29 +840,38 @@
     const confirmed = state.people.filter(p => isConfirmed(p));
     const threshold = Math.min(3, confirmed.length);
     const runs = [];
-    let runStart = null, runPeople = null;
+    let runStart = null;
 
     for (let i = 0; i < TOTAL_DAYS; i++) {
       const inTown = confirmed.filter(p => !isAway(p, i));
       if (inTown.length >= threshold) {
-        if (runStart === null) { runStart = i; runPeople = new Set(inTown.map(p => p.name)); }
-        else inTown.forEach(p => runPeople.add(p.name));
+        if (runStart === null) runStart = i;
       } else {
         if (runStart !== null) {
-          runs.push({ start: runStart, end: i - 1, names: [...runPeople] });
-          runStart = null; runPeople = null;
+          runs.push({ start: runStart, end: i - 1 });
+          runStart = null;
         }
       }
     }
-    if (runStart !== null) runs.push({ start: runStart, end: TOTAL_DAYS - 1, names: [...runPeople] });
+    if (runStart !== null) runs.push({ start: runStart, end: TOTAL_DAYS - 1 });
 
-    if (runs.length === 0) {
+    // For each run, compute who is in town for ALL days (intersection)
+    const enriched = runs.map(run => {
+      let core = null;
+      for (let i = run.start; i <= run.end; i++) {
+        const today = new Set(confirmed.filter(p => !isAway(p, i)).map(p => p.name));
+        core = core === null ? today : new Set([...core].filter(n => today.has(n)));
+      }
+      return { ...run, names: [...(core || [])] };
+    }).filter(r => r.names.length >= threshold);
+
+    if (enriched.length === 0) {
       el.innerHTML = `<div class="no-hangouts">No windows with 3+ people in town yet — more dates coming soon!</div>`;
       return;
     }
 
-    runs.sort((a,b) => a.start - b.start);
-    const top = runs.slice(0, 9);
+    enriched.sort((a,b) => a.start - b.start);
+    const top = enriched.slice(0, 9);
 
     let html = '';
     top.forEach(run => {
