@@ -65,7 +65,14 @@
     {
       "name": "Jordy",
       "color": "#FFE600",
-      "away": []
+      "away": [
+        {
+          "start": "2026-07-18",
+          "end": "2026-07-26",
+          "label": "California"
+        }
+      ],
+      "confirmed": true
     }
   ]
 }
