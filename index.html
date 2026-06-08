@@ -222,6 +222,13 @@
 
   .day-cell { flex: 1; height: 26px; cursor: default; }
   .day-cell.in  { background: var(--cyan); }
+  .day-cell.pending {
+    background: repeating-linear-gradient(
+      90deg,
+      #e8e0d8 0px, #e8e0d8 4px,
+      #f7f3ee 4px, #f7f3ee 8px
+    );
+  }
   .day-cell.out {
     background: repeating-linear-gradient(
       -45deg,
@@ -547,6 +554,7 @@
   <div class="legend-bar">
     <div class="legend-group"><div class="legend-swatch sw-in"></div>In NYC</div>
     <div class="legend-group"><div class="legend-swatch sw-out"></div>Away</div>
+    <div class="legend-group"><div class="legend-swatch" style="background:repeating-linear-gradient(90deg,#e8e0d8 0px,#e8e0d8 4px,#f7f3ee 4px,#f7f3ee 8px);border:1.5px solid #ccc"></div>Awaiting dates</div>
     <div class="legend-div"></div>
     <div class="legend-group"><div class="legend-swatch sw-ol2"></div>2 in town</div>
     <div class="legend-group"><div class="legend-swatch sw-ol3"></div>3 in town</div>
@@ -624,6 +632,9 @@
   }
   function isoFromIndex(i) {
     return new Date(SUMMER_START.getTime() + i * 86400000).toISOString().slice(0,10);
+  }
+  function isConfirmed(person) {
+    return person.confirmed === true || person.away.length > 0;
   }
   function isAway(person, idx) {
     return person.away.some(a => dayIndex(a.start) <= idx && idx <= dayIndex(a.end));
@@ -741,12 +752,16 @@
       html += `<div class="row-cells">`;
       if (todayVisible) html += `<div class="today-marker" style="left:${todayPct}%"></div>`;
       for (let i = 0; i < TOTAL_DAYS; i++) {
-        const away = isAway(p, i);
+        const confirmed = isConfirmed(p);
+        const away = confirmed && isAway(p, i);
         const info = away ? awayAt(p, i) : null;
-        const tt = away
-          ? `${p.name} ✈ ${info?.label||'away'} · ${formatDate(isoFromIndex(i))}`
-          : `${p.name} 🗽 NYC · ${formatDate(isoFromIndex(i))}`;
-        html += `<div class="day-cell ${away?'out':'in'}" data-tt="${tt}"
+        const cellClass = !confirmed ? 'pending' : away ? 'out' : 'in';
+        const tt = !confirmed
+          ? `${p.name} — awaiting dates · ${formatDate(isoFromIndex(i))}`
+          : away
+            ? `${p.name} ✈ ${info?.label||'away'} · ${formatDate(isoFromIndex(i))}`
+            : `${p.name} 🗽 NYC · ${formatDate(isoFromIndex(i))}`;
+        html += `<div class="day-cell ${cellClass}" data-tt="${tt}"
           onmouseenter="showTT(event,this)" onmouseleave="hideTT()"></div>`;
       }
       html += `</div></div>`;
@@ -760,15 +775,16 @@
     html += `<div class="row-cells">`;
     if (todayVisible) html += `<div class="today-marker" style="left:${todayPct}%;top:-8px"></div>`;
     for (let i = 0; i < TOTAL_DAYS; i++) {
-      const inTown = state.people.filter(p => !isAway(p, i)).length;
-      const total  = state.people.length;
+      const confirmed = state.people.filter(p => isConfirmed(p));
+      const inTown = confirmed.filter(p => !isAway(p, i)).length;
+      const total  = confirmed.length;
       let cls = 'ol0';
       if (inTown >= 5) cls = 'ol5plus';
       else if (inTown === 4) cls = 'ol4';
       else if (inTown === 3) cls = 'ol3';
       else if (inTown === 2) cls = 'ol2';
       else if (inTown === 1) cls = 'ol1';
-      const names = state.people.filter(p => !isAway(p, i)).map(p => p.name).join(', ') || 'Everyone away';
+      const names = confirmed.filter(p => !isAway(p, i)).map(p => p.name).join(', ') || 'Everyone away';
       const tt = `${names} · ${formatDate(isoFromIndex(i))}`;
       html += `<div class="day-cell ${cls}" data-tt="${tt}"
         onmouseenter="showTT(event,this)" onmouseleave="hideTT()"></div>`;
@@ -821,12 +837,13 @@
       return;
     }
 
-    const threshold = Math.min(3, total);
+    const confirmed = state.people.filter(p => isConfirmed(p));
+    const threshold = Math.min(3, confirmed.length);
     const runs = [];
     let runStart = null, runPeople = null;
 
     for (let i = 0; i < TOTAL_DAYS; i++) {
-      const inTown = state.people.filter(p => !isAway(p, i));
+      const inTown = confirmed.filter(p => !isAway(p, i));
       if (inTown.length >= threshold) {
         if (runStart === null) { runStart = i; runPeople = new Set(inTown.map(p => p.name)); }
         else inTown.forEach(p => runPeople.add(p.name));
@@ -850,9 +867,9 @@
     let html = '';
     top.forEach(run => {
       const days = run.end - run.start + 1;
-      const isAll = run.names.length === total;
+      const isAll = run.names.length === confirmed.length;
       const countCls = isAll ? 'all' : run.names.length >= 3 ? 'most' : 'some';
-      const countLabel = isAll ? '🔥 EVERYONE IN TOWN' : `${run.names.length} of ${total} in town`;
+      const countLabel = isAll ? '🔥 EVERYONE IN TOWN' : `${run.names.length} of ${confirmed.length} confirmed in town`;
       const startIso = isoFromIndex(run.start);
       const endIso   = isoFromIndex(run.end);
       const dateLabel = days === 1 ? formatDateLong(startIso) : `${formatDate(startIso)} – ${formatDate(endIso)}`;
@@ -998,14 +1015,16 @@
     let person = state.people.find(p => p.name === name);
     if (person) {
       person.away = away;
+      person.confirmed = true;
     } else {
       const colorIdx = state.people.length % PERSON_COLORS.length;
-      state.people.push({ name, color: PERSON_COLORS[colorIdx], away });
+      person = { name, color: PERSON_COLORS[colorIdx], away, confirmed: true };
+      state.people.push(person);
     }
 
     closeModal('edit-overlay');
     render();
-    await pushPerson(person || state.people.find(p => p.name === name));
+    await pushPerson(person);
   }
 
   function closeModal(id) { document.getElementById(id).classList.remove('open'); }

@@ -40,9 +40,9 @@ function applyPatch(currentData, patch) {
   const people = [...(currentData.people || [])];
   const idx = people.findIndex(p => p.name === patch.personName);
   if (idx >= 0) {
-    people[idx] = { ...people[idx], away: patch.away };
+    people[idx] = { ...people[idx], away: patch.away, confirmed: true };
   } else {
-    people.push({ name: patch.personName, color: patch.color || '#888', away: patch.away });
+    people.push({ name: patch.personName, color: patch.color || '#888', away: patch.away, confirmed: true });
   }
   return { ...currentData, people };
 }
