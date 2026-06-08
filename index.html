@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Summer in the City · 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F7F6F2;
+    --card: #FFFFFF;
+    --ink: #1A1A1A;
+    --mid: #6B6B6B;
+    --line: #E2E0D9;
+    --accent: #2563EB;
+    --danger: #DC2626;
+    --success: #16A34A;
+
+    --overlap-2: #FEF08A;
+    --overlap-3: #FCA849;
+    --overlap-4: #34D399;
+    --overlap-5plus: #A78BFA;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  .wrap { max-width: 1100px; margin: 0 auto; }
+
+  /* ── Header ── */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--ink);
+  }
+  header h1 { font-size: 28px; font-weight: 700; letter-spacing: -.03em; }
+  header p  { font-size: 13px; color: var(--mid); margin-top: 3px; }
+  .btn-add {
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity .15s;
+  }
+  .btn-add:hover { opacity: .85; }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: var(--mid);
+    font-weight: 500;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .swatch {
+    width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0;
+  }
+  .swatch.ol2 { background: var(--overlap-2); border: 1px solid #d4a017; }
+  .swatch.ol3 { background: var(--overlap-3); border: 1px solid #c06a10; }
+  .swatch.ol4 { background: var(--overlap-4); border: 1px solid #15803d; }
+  .swatch.ol5 { background: var(--overlap-5plus); border: 1px solid #6d28d9; }
+
+  /* ── Gantt container ── */
+  .gantt-wrap {
+    background: var(--card);
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    padding: 20px;
+    overflow-x: auto;
+    margin-bottom: 32px;
+  }
+
+  .gantt { min-width: 700px; }
+
+  /* Month + date header */
+  .gantt-header { margin-bottom: 8px; }
+  .gantt-month-row {
+    display: flex;
+    margin-left: 90px;
+    margin-bottom: 2px;
+  }
+  .month-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--mid);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    border-left: 2px solid var(--line);
+    padding: 0 0 0 4px;
+  }
+
+  .gantt-date-row {
+    display: flex;
+    margin-left: 90px;
+  }
+  .date-cell {
+    font-size: 8.5px;
+    color: var(--mid);
+    text-align: center;
+    border-left: 1px solid var(--line);
+    padding-bottom: 4px;
+    line-height: 1;
+  }
+
+  /* Person rows */
+  .gantt-body { display: flex; flex-direction: column; gap: 4px; }
+
+  .gantt-row { display: flex; align-items: stretch; }
+  .row-label {
+    width: 90px;
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
+    gap: 6px;
+  }
+  .row-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+  .row-cells { display: flex; flex: 1; }
+  .day-cell {
+    flex: 1;
+    height: 24px;
+    border-radius: 2px;
+    position: relative;
+    cursor: default;
+  }
+  .day-cell.away { opacity: 1; }
+  .day-cell.in-town { }
+
+  /* Overlap row */
+  .gantt-row.overlap .row-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--mid);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .gantt-row.overlap .day-cell { height: 18px; border-radius: 0; }
+  .gantt-row.overlap .day-cell.ol0 { background: transparent; }
+  .gantt-row.overlap .day-cell.ol1 { background: transparent; }
+  .gantt-row.overlap .day-cell.ol2 { background: var(--overlap-2); }
+  .gantt-row.overlap .day-cell.ol3 { background: var(--overlap-3); }
+  .gantt-row.overlap .day-cell.ol4 { background: var(--overlap-4); }
+  .gantt-row.overlap .day-cell.ol5plus { background: var(--overlap-5plus); }
+
+  /* Divider between person rows and overlap */
+  .gantt-divider {
+    margin: 6px 0 6px 90px;
+    border: none;
+    border-top: 1px solid var(--line);
+  }
+
+  /* Today line */
+  .today-marker {
+    position: absolute;
+    top: -200px;
+    bottom: 0;
+    width: 2px;
+    background: var(--accent);
+    opacity: .5;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* Tooltip */
+  .tt {
+    position: fixed;
+    background: var(--ink);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: 999;
+    white-space: nowrap;
+    display: none;
+  }
+
+  /* ── People cards ── */
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 12px;
+  }
+
+  .people-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .person-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .person-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .person-name-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .person-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+  }
+  .person-name { font-weight: 600; font-size: 15px; }
+  .btn-edit-person {
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--mid);
+    transition: all .15s;
+  }
+  .btn-edit-person:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  .away-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .away-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    font-size: 12px;
+    background: var(--bg);
+    border-radius: 6px;
+    padding: 6px 8px;
+  }
+  .away-dates { color: var(--mid); font-size: 11px; margin-top: 1px; }
+  .away-label { font-weight: 500; }
+  .btn-del {
+    background: none;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--mid);
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-left: 4px;
+  }
+  .btn-del:hover { color: var(--danger); }
+  .no-away { font-size: 12px; color: var(--mid); font-style: italic; }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  }
+  .modal h2 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+  .modal-sub { font-size: 13px; color: var(--mid); margin-bottom: 20px; }
+
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--mid);
+    margin-bottom: 6px;
+  }
+  .form-group input, .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #fff;
+    color: var(--ink);
+    outline: none;
+    transition: border-color .15s;
+  }
+  .form-group input:focus, .form-group select:focus {
+    border-color: var(--accent);
+  }
+
+  .away-period-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+
+  .away-period-item {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    position: relative;
+  }
+  .away-period-item .dates-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .away-period-item .btn-remove {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: var(--mid);
+    line-height: 1;
+    padding: 2px;
+  }
+  .away-period-item .btn-remove:hover { color: var(--danger); }
+
+  .btn-add-period {
+    background: none;
+    border: 2px dashed var(--line);
+    border-radius: 8px;
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--mid);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .btn-add-period:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+  }
+  .btn-save {
+    flex: 1;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .btn-save:hover { opacity: .85; }
+  .btn-cancel {
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--mid);
+    transition: all .15s;
+  }
+  .btn-cancel:hover { border-color: var(--ink); color: var(--ink); }
+
+  /* ── Loading / error ── */
+  .status-bar {
+    font-size: 12px;
+    color: var(--mid);
+    text-align: center;
+    padding: 8px;
+    min-height: 28px;
+  }
+  .status-bar.error { color: var(--danger); }
+  .status-bar.saving { color: var(--accent); }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 22px; }
+    .gantt-wrap { padding: 12px; }
+    .modal { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <h1>Summer in the City 🌆</h1>
+      <p>Jun 8 – Sep 7, 2026 · When are we all in New York?</p>
+    </div>
+    <button class="btn-add" onclick="openModal()">+ Update my dates</button>
+  </header>
+
+  <div class="legend">
+    <div class="legend-item"><div class="swatch ol2"></div>2 people in town</div>
+    <div class="legend-item"><div class="swatch ol3"></div>3 people in town</div>
+    <div class="legend-item"><div class="swatch ol4"></div>4 people in town</div>
+    <div class="legend-item"><div class="swatch ol5"></div>5+ people in town</div>
+  </div>
+
+  <div class="gantt-wrap">
+    <div class="gantt" id="gantt"></div>
+  </div>
+
+  <div class="section-title">Everyone's plans</div>
+  <div class="people-grid" id="people-grid"></div>
+
+  <div class="status-bar" id="status"></div>
+</div>
+
+<!-- Tooltip -->
+<div class="tt" id="tooltip"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <h2 id="modal-title">Update my dates</h2>
+    <p class="modal-sub">Select your name and add any trips away from NYC.</p>
+
+    <div class="form-group">
+      <label>Your name</label>
+      <select id="name-select" onchange="onNameChange()">
+        <option value="">— pick your name —</option>
+        <option value="__new__">+ Add a new person</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="new-name-group" style="display:none">
+      <label>Enter your name</label>
+      <input type="text" id="new-name-input" placeholder="First name" maxlength="30">
+    </div>
+
+    <div style="margin-bottom:10px">
+      <div class="section-title" style="margin-bottom:8px">Away from NYC</div>
+      <div class="away-period-list" id="away-period-list"></div>
+      <button class="btn-add-period" onclick="addAwayPeriod()">+ Add a trip</button>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveData()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Config ──
+  const BLOB_ID = '019ea79b-ab15-7fdd-85f3-8509d6b434be';
+  const API_BASE = `https://jsonblob.com/api/jsonBlob/${BLOB_ID}`;
+
+  const SUMMER_START = new Date(Date.UTC(2026, 5, 8));   // Jun 8
+  const SUMMER_END   = new Date(Date.UTC(2026, 8, 7));    // Sep 7
+  const TOTAL_DAYS   = Math.round((SUMMER_END - SUMMER_START) / 86400000) + 1; // 92
+
+  const PERSON_COLORS = ['#E85D75','#2DA89A','#7B5EA7','#E8873A','#3B82F6','#F59E0B'];
+
+  let state = { people: [] };
+  let editingName = null; // name being edited in modal
+
+  // ── Dates ──
+  function dayIndex(iso) {
+    const d = new Date(iso + 'T00:00:00Z');
+    return Math.round((d - SUMMER_START) / 86400000);
+  }
+
+  function isoFromIndex(i) {
+    const d = new Date(SUMMER_START.getTime() + i * 86400000);
+    return d.toISOString().slice(0,10);
+  }
+
+  function isAway(person, idx) {
+    return person.away.some(({start, end}) => {
+      const s = dayIndex(start);
+      const e = dayIndex(end);
+      return idx >= s && idx <= e;
+    });
+  }
+
+  function formatDate(iso) {
+    const d = new Date(iso + 'T00:00:00Z');
+    return d.toLocaleDateString('en-US', {month:'short', day:'numeric', timeZone:'UTC'});
+  }
+
+  // ── Fetch / Save ──
+  async function fetchData() {
+    setStatus('Loading…', '');
+    try {
+      const res = await fetch(API_BASE, {
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!res.ok) throw new Error('Failed to load');
+      state = await res.json();
+      render();
+      setStatus('');
+    } catch(e) {
+      setStatus('Could not load data. ' + e.message, 'error');
+    }
+  }
+
+  async function pushData() {
+    setStatus('Saving…', 'saving');
+    try {
+      const res = await fetch(API_BASE, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(state)
+      });
+      if (!res.ok) throw new Error('Save failed');
+      setStatus('Saved ✓', '');
+      setTimeout(() => setStatus(''), 2000);
+    } catch(e) {
+      setStatus('Could not save. ' + e.message, 'error');
+    }
+  }
+
+  function setStatus(msg, cls='') {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.className = 'status-bar' + (cls ? ' ' + cls : '');
+  }
+
+  // ── Render Gantt ──
+  function render() {
+    renderGantt();
+    renderPeopleGrid();
+    populateNameSelect();
+  }
+
+  function renderGantt() {
+    const el = document.getElementById('gantt');
+
+    // Build per-day data
+    const days = [];
+    for (let i = 0; i < TOTAL_DAYS; i++) {
+      const d = new Date(SUMMER_START.getTime() + i * 86400000);
+      const inTown = state.people.filter(p => !isAway(p, i));
+      days.push({ d, inTown: inTown.length, total: state.people.length });
+    }
+
+    // Month spans for header
+    const months = [];
+    let curM = -1, curStart = 0;
+    for (let i = 0; i < TOTAL_DAYS; i++) {
+      const d = new Date(SUMMER_START.getTime() + i * 86400000);
+      const m = d.getUTCMonth();
+      if (m !== curM) {
+        if (curM !== -1) months.push({ name: monthName(curM), count: i - curStart });
+        curM = m; curStart = i;
+      }
+    }
+    months.push({ name: monthName(curM), count: TOTAL_DAYS - curStart });
+
+    // Today
+    const todayIdx = dayIndex(new Date().toISOString().slice(0,10));
+    const todayPct = (todayIdx / TOTAL_DAYS) * 100;
+
+    let html = `<div class="gantt-header">`;
+
+    // Month labels row
+    html += `<div class="gantt-month-row">`;
+    months.forEach(m => {
+      const w = (m.count / TOTAL_DAYS) * 100;
+      html += `<div class="month-label" style="width:${w}%">${m.name}</div>`;
+    });
+    html += `</div>`;
+
+    // Date labels (every 7 days)
+    html += `<div class="gantt-date-row">`;
+    for (let i = 0; i < TOTAL_DAYS; i++) {
+      const d = new Date(SUMMER_START.getTime() + i * 86400000);
+      const w = (1 / TOTAL_DAYS) * 100;
+      const label = (i === 0 || d.getUTCDay() === 1) ? d.getUTCDate() : '';
+      html += `<div class="date-cell" style="width:${w}%">${label}</div>`;
+    }
+    html += `</div></div>`; // close gantt-header
+
+    html += `<div class="gantt-body">`;
+
+    // Person rows
+    state.people.forEach(person => {
+      html += `<div class="gantt-row">`;
+      html += `<div class="row-label"><div class="row-dot" style="background:${person.color}"></div>${person.name}</div>`;
+      html += `<div class="row-cells" style="position:relative">`;
+
+      // Today marker
+      if (todayIdx >= 0 && todayIdx < TOTAL_DAYS) {
+        html += `<div class="today-marker" style="left:${todayPct}%;top:0;bottom:0;position:absolute"></div>`;
+      }
+
+      for (let i = 0; i < TOTAL_DAYS; i++) {
+        const away = isAway(person, i);
+        const iso = isoFromIndex(i);
+        const awayInfo = away ? person.away.find(a => dayIndex(a.start) <= i && i <= dayIndex(a.end)) : null;
+        const ttText = away ? `${person.name} away — ${awayInfo?.label || ''}` : `${person.name} in NYC`;
+        const bg = away ? '#E2E0D9' : person.color + '33';
+        const border = away ? '1px solid #ccc' : `1px solid ${person.color}44`;
+        const opacity = away ? 0.7 : 1;
+        html += `<div class="day-cell" style="background:${bg};border:${border};opacity:${opacity}"
+          data-tt="${ttText} · ${formatDate(iso)}"
+          onmouseenter="showTT(event,this)" onmouseleave="hideTT()"></div>`;
+      }
+
+      html += `</div></div>`;
+    });
+
+    // Divider
+    html += `<hr class="gantt-divider">`;
+
+    // Overlap row
+    html += `<div class="gantt-row overlap">`;
+    html += `<div class="row-label">In NYC</div>`;
+    html += `<div class="row-cells" style="position:relative">`;
+
+    if (todayIdx >= 0 && todayIdx < TOTAL_DAYS) {
+      html += `<div class="today-marker" style="left:${todayPct}%;top:-6px;bottom:0;position:absolute"></div>`;
+    }
+
+    for (let i = 0; i < TOTAL_DAYS; i++) {
+      const inTown = state.people.filter(p => !isAway(p, i)).length;
+      const total = state.people.length;
+      let cls = 'ol0';
+      let ttMsg = `${inTown} of ${total} in NYC`;
+      if (total > 0) {
+        if (inTown >= 5) cls = 'ol5plus';
+        else if (inTown === 4) cls = 'ol4';
+        else if (inTown === 3) cls = 'ol3';
+        else if (inTown === 2) cls = 'ol2';
+        else if (inTown === 1) cls = 'ol1';
+        else cls = 'ol0';
+      }
+      html += `<div class="day-cell ${cls}"
+        data-tt="${ttMsg} · ${formatDate(isoFromIndex(i))}"
+        onmouseenter="showTT(event,this)" onmouseleave="hideTT()"></div>`;
+    }
+
+    html += `</div></div>`;
+    html += `</div>`; // close gantt-body
+    el.innerHTML = html;
+  }
+
+  function monthName(m) {
+    return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m];
+  }
+
+  // ── People Grid ──
+  function renderPeopleGrid() {
+    const el = document.getElementById('people-grid');
+    let html = '';
+    state.people.forEach(person => {
+      html += `<div class="person-card">`;
+      html += `<div class="person-card-head">
+        <div class="person-name-row">
+          <div class="person-dot" style="background:${person.color}"></div>
+          <span class="person-name">${person.name}</span>
+        </div>
+        <button class="btn-edit-person" onclick="openModal('${person.name}')">Edit</button>
+      </div>`;
+
+      if (person.away.length === 0) {
+        html += `<p class="no-away">No trips yet — all summer in NYC 🗽</p>`;
+      } else {
+        html += `<ul class="away-list">`;
+        person.away.forEach((a, idx) => {
+          html += `<li class="away-item">
+            <div>
+              <div class="away-label">${a.label || 'Away'}</div>
+              <div class="away-dates">${formatDate(a.start)} – ${formatDate(a.end)}</div>
+            </div>
+            <button class="btn-del" onclick="deleteAway('${person.name}', ${idx})" title="Remove">×</button>
+          </li>`;
+        });
+        html += `</ul>`;
+      }
+      html += `</div>`;
+    });
+    el.innerHTML = html;
+  }
+
+  // ── Tooltip ──
+  function showTT(e, el) {
+    const tt = document.getElementById('tooltip');
+    tt.textContent = el.dataset.tt;
+    tt.style.display = 'block';
+    moveTT(e);
+  }
+  function hideTT() {
+    document.getElementById('tooltip').style.display = 'none';
+  }
+  document.addEventListener('mousemove', e => {
+    if (document.getElementById('tooltip').style.display === 'block') moveTT(e);
+  });
+  function moveTT(e) {
+    const tt = document.getElementById('tooltip');
+    tt.style.left = (e.clientX + 12) + 'px';
+    tt.style.top  = (e.clientY - 30) + 'px';
+  }
+
+  // ── Delete away period (from card) ──
+  async function deleteAway(name, idx) {
+    const person = state.people.find(p => p.name === name);
+    if (!person) return;
+    person.away.splice(idx, 1);
+    render();
+    await pushData();
+  }
+
+  // ── Modal ──
+  function populateNameSelect() {
+    const sel = document.getElementById('name-select');
+    const current = sel.value;
+    sel.innerHTML = `<option value="">— pick your name —</option>`;
+    state.people.forEach(p => {
+      sel.innerHTML += `<option value="${p.name}"${p.name === current ? ' selected' : ''}>${p.name}</option>`;
+    });
+    sel.innerHTML += `<option value="__new__">+ Add a new person</option>`;
+  }
+
+  function openModal(name) {
+    editingName = name || null;
+    populateNameSelect();
+
+    const sel = document.getElementById('name-select');
+    const newGroup = document.getElementById('new-name-group');
+
+    if (name) {
+      sel.value = name;
+      newGroup.style.display = 'none';
+      document.getElementById('modal-title').textContent = `Edit ${name}'s dates`;
+      loadAwayPeriods(name);
+    } else {
+      sel.value = '';
+      newGroup.style.display = 'none';
+      document.getElementById('modal-title').textContent = 'Update my dates';
+      document.getElementById('away-period-list').innerHTML = '';
+    }
+
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    editingName = null;
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  }
+
+  function onNameChange() {
+    const sel = document.getElementById('name-select');
+    const val = sel.value;
+    const newGroup = document.getElementById('new-name-group');
+
+    if (val === '__new__') {
+      newGroup.style.display = 'block';
+      document.getElementById('away-period-list').innerHTML = '';
+      editingName = null;
+    } else if (val) {
+      newGroup.style.display = 'none';
+      editingName = val;
+      loadAwayPeriods(val);
+      document.getElementById('modal-title').textContent = `Edit ${val}'s dates`;
+    } else {
+      newGroup.style.display = 'none';
+      document.getElementById('away-period-list').innerHTML = '';
+      editingName = null;
+    }
+  }
+
+  function loadAwayPeriods(name) {
+    const person = state.people.find(p => p.name === name);
+    const list = document.getElementById('away-period-list');
+    list.innerHTML = '';
+    if (person) {
+      person.away.forEach(a => addAwayPeriod(a.start, a.end, a.label));
+    }
+  }
+
+  function addAwayPeriod(start='', end='', label='') {
+    const list = document.getElementById('away-period-list');
+    const id = Date.now() + Math.random();
+    const div = document.createElement('div');
+    div.className = 'away-period-item';
+    div.dataset.id = id;
+    div.innerHTML = `
+      <button class="btn-remove" onclick="this.closest('.away-period-item').remove()">×</button>
+      <div class="dates-row">
+        <div>
+          <label style="font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px">Depart</label>
+          <input type="date" class="start-date" value="${start}"
+            min="2026-06-08" max="2026-09-07">
+        </div>
+        <div>
+          <label style="font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px">Return</label>
+          <input type="date" class="end-date" value="${end}"
+            min="2026-06-08" max="2026-09-07">
+        </div>
+      </div>
+      <div>
+        <label style="font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px">Where?</label>
+        <input type="text" class="trip-label" value="${label}" placeholder="e.g. Hamptons, Italy…" maxlength="40">
+      </div>`;
+    list.appendChild(div);
+  }
+
+  async function saveData() {
+    const sel = document.getElementById('name-select');
+    let name = sel.value;
+
+    if (name === '__new__') {
+      name = document.getElementById('new-name-input').value.trim();
+      if (!name) { alert('Please enter your name.'); return; }
+    }
+    if (!name) { alert('Please select your name.'); return; }
+
+    // Collect away periods
+    const away = [];
+    document.querySelectorAll('.away-period-item').forEach(item => {
+      const start = item.querySelector('.start-date').value;
+      const end   = item.querySelector('.end-date').value;
+      const label = item.querySelector('.trip-label').value.trim();
+      if (start && end) {
+        if (end < start) { alert('Return date must be after departure.'); throw new Error('invalid'); }
+        away.push({ start, end, label: label || 'Away' });
+      }
+    });
+
+    // Sort away by start date
+    away.sort((a,b) => a.start.localeCompare(b.start));
+
+    let person = state.people.find(p => p.name === name);
+    if (person) {
+      // Merge: keep existing away periods that aren't in the new list?
+      // We're replacing all (user sees all periods in modal when editing)
+      person.away = away;
+    } else {
+      // New person
+      const colorIdx = state.people.length % PERSON_COLORS.length;
+      state.people.push({ name, color: PERSON_COLORS[colorIdx], away });
+    }
+
+    closeModal();
+    render();
+    await pushData();
+  }
+
+  // ── Init ──
+  fetchData();
+</script>
+</body>
+</html>
