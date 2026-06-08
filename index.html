@@ -5,37 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Summer in the City · 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Righteous&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #0D0D1A;
-    --card: #15152A;
-    --card2: #1C1C35;
-    --ink: #FFFFFF;
-    --mid: #A0A0C0;
-    --line: #2A2A50;
+    --bg:      #F7F3EE;
+    --white:   #FFFFFF;
+    --ink:     #111111;
+    --mid:     #666666;
+    --line:    #DDDDDD;
 
-    --neon-pink:   #FF2D78;
-    --neon-cyan:   #00F5FF;
-    --neon-yellow: #FFE600;
-    --neon-green:  #39FF14;
-    --neon-orange: #FF6B00;
-    --neon-purple: #CC44FF;
+    --cyan:    #00C8D4;
+    --pink:    #F0197D;
+    --yellow:  #FFE600;
+    --orange:  #FF6B1A;
+    --purple:  #7B2FBE;
 
-    /* Consistent in-town / away */
-    --in-town-bg:    #39FF14;
-    --in-town-text:  #0A1A00;
-    --away-bg:       #2A2A50;
-    --away-stripe1:  #1e1e3a;
-    --away-stripe2:  #2A2A50;
+    --in-town: var(--cyan);
+    --away-s1: #F7F3EE;
+    --away-s2: #D8C8D8;
 
-    /* Overlap */
     --ol2: #FFE600;
-    --ol3: #FF6B00;
-    --ol4: #FF2D78;
-    --ol5: #CC44FF;
+    --ol3: var(--orange);
+    --ol4: var(--pink);
+    --ol5: var(--purple);
   }
 
   body {
@@ -43,101 +37,141 @@
     background: var(--bg);
     color: var(--ink);
     min-height: 100vh;
-    padding: 0 0 80px;
-    background-image:
-      linear-gradient(rgba(255,45,120,.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,45,120,.04) 1px, transparent 1px);
-    background-size: 40px 40px;
+    padding-bottom: 80px;
   }
 
-  /* ── HEADER ── */
+  /* ── HERO ── */
   .hero {
-    background: linear-gradient(135deg, #1A0033 0%, #0D0D4A 40%, #001A33 100%);
-    border-bottom: 3px solid var(--neon-pink);
-    padding: 36px 24px 28px;
+    background: var(--white);
+    border-bottom: 4px solid var(--ink);
+    padding: 48px 24px 36px;
     text-align: center;
     position: relative;
     overflow: hidden;
   }
+
+  /* Diagonal stripe background */
   .hero::before {
     content: '';
     position: absolute; inset: 0;
     background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 38px,
-      rgba(0,245,255,.06) 38px,
-      rgba(0,245,255,.06) 40px
+      -55deg,
+      transparent 0px, transparent 18px,
+      rgba(0,200,212,.12) 18px, rgba(0,200,212,.12) 22px,
+      transparent 22px, transparent 40px,
+      rgba(240,25,125,.09) 40px, rgba(240,25,125,.09) 44px
     );
     pointer-events: none;
   }
-  .hero-emoji { font-size: 36px; line-height: 1; margin-bottom: 8px; }
+
+  /* Geometric accent shapes */
+  .hero-shape1 {
+    position: absolute; top: -30px; left: -30px;
+    width: 160px; height: 160px;
+    background: var(--yellow);
+    transform: rotate(15deg);
+    z-index: 0; opacity: .7;
+  }
+  .hero-shape2 {
+    position: absolute; bottom: -20px; right: 40px;
+    width: 0; height: 0;
+    border-left: 80px solid transparent;
+    border-right: 80px solid transparent;
+    border-bottom: 140px solid var(--cyan);
+    opacity: .5; z-index: 0;
+  }
+  .hero-shape3 {
+    position: absolute; top: 20px; right: -20px;
+    width: 120px; height: 120px;
+    background: var(--pink);
+    border-radius: 50%;
+    opacity: .2; z-index: 0;
+  }
+  .hero-dots {
+    position: absolute; bottom: 16px; left: 50px;
+    display: grid; grid-template-columns: repeat(7, 10px); gap: 7px;
+    z-index: 0; opacity: .5;
+  }
+  .hero-dots span {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--pink);
+    display: block;
+  }
+
+  .hero-inner { position: relative; z-index: 1; }
+  .hero-emoji { font-size: 32px; line-height: 1; margin-bottom: 10px; }
+
   .hero h1 {
-    font-family: 'Boogaloo', sans-serif;
-    font-size: clamp(40px, 8vw, 72px);
-    line-height: 1;
-    letter-spacing: .02em;
-    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink), var(--neon-yellow));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: none;
-    margin-bottom: 8px;
-    position: relative;
+    font-family: 'Bangers', sans-serif;
+    font-size: clamp(52px, 10vw, 96px);
+    line-height: .95;
+    letter-spacing: .04em;
+    color: var(--ink);
+    text-shadow:
+      4px 4px 0 var(--cyan),
+      8px 8px 0 var(--pink);
+    margin-bottom: 12px;
   }
+
   .hero-sub {
+    font-family: 'Righteous', sans-serif;
     font-size: 14px;
-    color: var(--neon-cyan);
-    letter-spacing: .12em;
+    color: var(--mid);
+    letter-spacing: .14em;
     text-transform: uppercase;
-    font-weight: 600;
-    opacity: .85;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    background: var(--yellow);
+    display: inline-block;
+    padding: 4px 16px;
+    border: 2px solid var(--ink);
+    border-radius: 2px;
   }
+
   .btn-primary {
     display: inline-block;
-    background: var(--neon-pink);
+    background: var(--pink);
     color: #fff;
-    border: none;
-    border-radius: 50px;
-    padding: 12px 28px;
-    font-size: 15px;
-    font-weight: 700;
+    border: 3px solid var(--ink);
+    border-radius: 4px;
+    padding: 12px 30px;
+    font-family: 'Bangers', sans-serif;
+    font-size: 22px;
+    letter-spacing: .08em;
     cursor: pointer;
-    font-family: 'Boogaloo', sans-serif;
-    letter-spacing: .06em;
-    font-size: 18px;
-    transition: transform .15s, box-shadow .15s;
-    box-shadow: 0 0 20px rgba(255,45,120,.5);
+    transition: transform .1s, box-shadow .1s;
+    box-shadow: 4px 4px 0 var(--ink);
     text-transform: uppercase;
   }
   .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 32px rgba(255,45,120,.8);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  .btn-primary:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--ink);
   }
 
   .wrap { max-width: 1140px; margin: 0 auto; padding: 28px 20px; }
 
   /* ── LEGEND ── */
   .legend-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 24px;
-    margin-bottom: 24px;
-    padding: 14px 18px;
-    background: var(--card);
-    border-radius: 12px;
-    border: 1px solid var(--line);
+    display: flex; flex-wrap: wrap; gap: 8px 20px;
+    margin-bottom: 22px; padding: 12px 18px;
+    background: var(--white);
+    border: 2px solid var(--ink);
+    border-radius: 4px;
+    box-shadow: 3px 3px 0 var(--ink);
     align-items: center;
   }
-  .legend-group { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--mid); font-weight: 600; text-transform: uppercase; letter-spacing: .07em; }
-  .legend-swatch { width: 18px; height: 12px; border-radius: 3px; flex-shrink: 0; }
-  .sw-in  { background: var(--in-town-bg); }
+  .legend-group { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--ink); }
+  .legend-swatch { width: 20px; height: 13px; border-radius: 2px; border: 1.5px solid var(--ink); flex-shrink: 0; }
+  .sw-in  { background: var(--cyan); }
   .sw-out {
-    background: repeating-linear-gradient(45deg,
-      var(--away-stripe1), var(--away-stripe1) 3px,
-      var(--away-stripe2) 3px, var(--away-stripe2) 7px);
-    border: 1px solid #3a3a60;
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--away-s1), var(--away-s1) 3px,
+      var(--away-s2) 3px, var(--away-s2) 7px
+    );
   }
   .sw-ol2 { background: var(--ol2); }
   .sw-ol3 { background: var(--ol3); }
@@ -146,256 +180,254 @@
 
   /* ── GANTT ── */
   .gantt-card {
-    background: var(--card);
-    border-radius: 16px;
-    border: 1px solid var(--line);
+    background: var(--white);
+    border: 2px solid var(--ink);
+    border-radius: 4px;
+    box-shadow: 4px 4px 0 var(--ink);
     padding: 22px;
     overflow-x: auto;
     margin-bottom: 32px;
-    box-shadow: 0 0 40px rgba(0,245,255,.04);
   }
   .gantt { min-width: 680px; }
 
   .gantt-month-row { display: flex; margin-left: 88px; margin-bottom: 3px; }
   .month-label {
-    font-family: 'Boogaloo', sans-serif;
-    font-size: 13px;
-    color: var(--neon-cyan);
+    font-family: 'Righteous', sans-serif;
+    font-size: 12px; color: var(--pink);
     border-left: 2px solid var(--line);
-    padding-left: 5px;
-    letter-spacing: .05em;
+    padding-left: 5px; letter-spacing: .06em;
+    text-transform: uppercase;
   }
   .gantt-date-row { display: flex; margin-left: 88px; margin-bottom: 6px; }
   .date-cell {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 7.5px;
-    color: var(--mid);
-    text-align: center;
-    border-left: 1px solid var(--line);
-    padding-bottom: 3px;
-    line-height: 1;
+    font-size: 7.5px; color: var(--mid); text-align: center;
+    border-left: 1px solid var(--line); padding-bottom: 3px; line-height: 1;
   }
 
   .gantt-body { display: flex; flex-direction: column; gap: 5px; }
-
   .gantt-row { display: flex; align-items: stretch; }
   .row-label {
     width: 88px; flex-shrink: 0;
-    font-size: 13px; font-weight: 700;
+    font-family: 'Righteous', sans-serif;
+    font-size: 15px; letter-spacing: .03em;
     display: flex; align-items: center;
-    padding-right: 10px; gap: 7px;
-    font-family: 'Boogaloo', sans-serif;
-    font-size: 16px; letter-spacing: .04em;
-    color: var(--ink);
+    padding-right: 10px; gap: 7px; color: var(--ink);
   }
-  .row-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 6px currentColor; }
-  .row-cells { display: flex; flex: 1; position: relative; border-radius: 4px; overflow: hidden; }
+  .row-dot {
+    width: 11px; height: 11px; border-radius: 50%;
+    border: 2px solid var(--ink); flex-shrink: 0;
+  }
+  .row-cells { display: flex; flex: 1; position: relative; border: 1.5px solid var(--line); border-radius: 3px; overflow: hidden; }
 
   .day-cell { flex: 1; height: 26px; cursor: default; }
-  .day-cell.in  { background: var(--in-town-bg); }
+  .day-cell.in  { background: var(--cyan); }
   .day-cell.out {
-    background: repeating-linear-gradient(45deg,
-      var(--away-stripe1), var(--away-stripe1) 3px,
-      var(--away-stripe2) 3px, var(--away-stripe2) 7px);
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--away-s1), var(--away-s1) 3px,
+      var(--away-s2) 3px, var(--away-s2) 7px
+    );
   }
 
   .gantt-row.overlap .row-label {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px; font-weight: 700;
-    color: var(--mid); text-transform: uppercase; letter-spacing: .07em;
+    font-size: 8.5px; font-weight: 700; color: var(--mid);
+    text-transform: uppercase; letter-spacing: .07em;
   }
   .gantt-row.overlap .day-cell { height: 20px; }
   .gantt-row.overlap .day-cell.ol0,
   .gantt-row.overlap .day-cell.ol1 { background: transparent; }
   .gantt-row.overlap .day-cell.ol2 { background: var(--ol2); }
   .gantt-row.overlap .day-cell.ol3 { background: var(--ol3); }
-  .gantt-row.overlap .day-cell.ol4 { background: var(--ol4); box-shadow: 0 0 8px var(--ol4); }
-  .gantt-row.overlap .day-cell.ol5plus { background: var(--ol5); box-shadow: 0 0 8px var(--ol5); }
+  .gantt-row.overlap .day-cell.ol4 { background: var(--ol4); }
+  .gantt-row.overlap .day-cell.ol5plus { background: var(--ol5); }
 
-  .gantt-divider { margin: 8px 0 8px 88px; border: none; border-top: 1px solid var(--line); }
+  .gantt-divider { margin: 8px 0 8px 88px; border: none; border-top: 2px dashed var(--line); }
 
   .today-marker {
     position: absolute; top: 0; bottom: 0; width: 2px;
-    background: var(--neon-cyan);
-    box-shadow: 0 0 6px var(--neon-cyan);
-    pointer-events: none; z-index: 5;
+    background: var(--ink); pointer-events: none; z-index: 5;
   }
 
   /* ── TOOLTIP ── */
   .tt {
     position: fixed;
-    background: #0A0A1F;
-    color: var(--neon-cyan);
-    font-size: 12px; font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 6px;
-    border: 1px solid var(--neon-cyan);
+    background: var(--ink); color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 600;
+    padding: 5px 11px; border-radius: 3px;
+    border: 2px solid var(--ink);
     pointer-events: none; z-index: 999;
     white-space: nowrap; display: none;
-    box-shadow: 0 0 14px rgba(0,245,255,.3);
-    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: 'Bangers', sans-serif;
+    font-size: 34px; letter-spacing: .05em;
+    color: var(--ink); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1; height: 3px;
+    background: repeating-linear-gradient(90deg, var(--ink) 0px, var(--ink) 8px, transparent 8px, transparent 13px);
   }
 
   /* ── PEOPLE GRID ── */
-  .section-title {
-    font-family: 'Boogaloo', sans-serif;
-    font-size: 26px;
-    letter-spacing: .04em;
-    margin-bottom: 14px;
-    color: var(--neon-yellow);
-    text-shadow: 0 0 20px rgba(255,230,0,.4);
-  }
   .people-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 14px;
-    margin-bottom: 40px;
+    gap: 14px; margin-bottom: 40px;
   }
+
   .person-card {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 14px;
+    background: var(--white);
+    border: 2px solid var(--ink);
+    border-radius: 4px;
+    box-shadow: 3px 3px 0 var(--ink);
     padding: 18px;
-    transition: border-color .2s;
+    transition: transform .1s, box-shadow .1s;
   }
-  .person-card:hover { border-color: var(--neon-pink); }
+  .person-card:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
   .person-card-head {
     display: flex; justify-content: space-between;
     align-items: center; margin-bottom: 12px;
   }
   .person-name-row { display: flex; align-items: center; gap: 8px; }
-  .person-dot { width: 13px; height: 13px; border-radius: 50%; }
-  .person-name {
-    font-family: 'Boogaloo', sans-serif;
-    font-size: 20px; letter-spacing: .04em;
+  .person-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--ink);
   }
+  .person-name { font-family: 'Bangers', sans-serif; font-size: 22px; letter-spacing: .05em; }
+
   .btn-edit-person {
-    background: none;
-    border: 1px solid var(--line);
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 11px; font-weight: 700;
-    cursor: pointer; color: var(--mid);
-    transition: all .15s; font-family: inherit;
-    text-transform: uppercase; letter-spacing: .06em;
+    background: none; border: 2px solid var(--ink); border-radius: 3px;
+    padding: 3px 10px; font-size: 10px; font-weight: 700;
+    cursor: pointer; color: var(--ink);
+    font-family: 'Righteous', sans-serif; letter-spacing: .07em;
+    text-transform: uppercase;
+    transition: all .1s;
   }
-  .btn-edit-person:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+  .btn-edit-person:hover { background: var(--ink); color: var(--white); }
 
   .away-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
   .away-item {
     display: flex; justify-content: space-between; align-items: flex-start;
-    font-size: 12px; background: var(--card2);
-    border-radius: 8px; padding: 7px 10px;
-    border-left: 3px solid var(--neon-pink);
+    font-size: 12px; background: var(--bg);
+    border-radius: 3px; padding: 7px 10px;
+    border-left: 4px solid var(--pink);
   }
-  .away-label { font-weight: 600; color: var(--ink); }
-  .away-dates { color: var(--mid); font-size: 11px; margin-top: 2px; font-family: 'IBM Plex Mono', monospace; }
+  .away-label { font-weight: 700; color: var(--ink); }
+  .away-dates { color: var(--mid); font-size: 10px; margin-top: 2px; font-family: 'IBM Plex Mono', monospace; }
   .btn-del {
     background: none; border: none; font-size: 16px; cursor: pointer;
     color: var(--mid); padding: 0; line-height: 1; flex-shrink: 0; margin-left: 6px;
   }
-  .btn-del:hover { color: var(--neon-pink); }
-  .no-away {
-    font-size: 12px; color: var(--neon-green);
-    font-weight: 600; letter-spacing: .04em;
+  .btn-del:hover { color: var(--pink); }
+
+  .status-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .07em; padding: 4px 10px;
+    border-radius: 3px; border: 2px dashed;
   }
-  .no-away::before { content: '🗽 '; }
+  .status-tag.awaiting {
+    color: var(--orange); border-color: var(--orange);
+    background: #FFF5EE;
+  }
 
   /* ── HANGOUT SECTION ── */
-  .hangout-section {
-    margin-top: 8px;
-  }
   .hangout-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 14px;
   }
   .hangout-card {
-    background: var(--card);
-    border: 1px solid var(--neon-green);
-    border-radius: 14px;
+    background: var(--white);
+    border: 2px solid var(--ink);
+    border-radius: 4px;
+    box-shadow: 3px 3px 0 var(--ink);
     padding: 18px;
     position: relative;
     overflow: hidden;
-    transition: box-shadow .2s;
+    transition: transform .1s, box-shadow .1s;
   }
   .hangout-card:hover {
-    box-shadow: 0 0 24px rgba(57,255,20,.2);
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 var(--ink);
   }
-  .hangout-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 3px;
-    background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan));
+  .hangout-card .accent-stripe {
+    position: absolute; top: 0; left: 0; right: 0; height: 5px;
+    background: repeating-linear-gradient(90deg,
+      var(--cyan) 0px, var(--cyan) 16px,
+      var(--yellow) 16px, var(--yellow) 32px,
+      var(--pink) 32px, var(--pink) 48px
+    );
   }
-  .hangout-card.hot { border-color: var(--neon-pink); }
-  .hangout-card.hot::before {
-    background: linear-gradient(90deg, var(--neon-pink), var(--neon-yellow));
+  .hangout-card.hot .accent-stripe {
+    background: repeating-linear-gradient(90deg,
+      var(--pink) 0px, var(--pink) 16px,
+      var(--yellow) 16px, var(--yellow) 32px,
+      var(--orange) 32px, var(--orange) 48px
+    );
   }
-  .hangout-card.hot:hover { box-shadow: 0 0 24px rgba(255,45,120,.3); }
+  .hangout-card-inner { padding-top: 8px; }
 
   .hc-dates {
-    font-family: 'Boogaloo', sans-serif;
-    font-size: 22px;
-    color: var(--ink);
-    letter-spacing: .03em;
-    margin-bottom: 6px;
+    font-family: 'Bangers', sans-serif;
+    font-size: 22px; color: var(--ink);
+    letter-spacing: .03em; margin-bottom: 6px;
   }
   .hc-count {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .1em;
-    margin-bottom: 10px;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .1em;
+    margin-bottom: 10px; font-family: 'Righteous', sans-serif;
   }
-  .hc-count.all  { color: var(--neon-pink); }
-  .hc-count.most { color: var(--neon-yellow); }
-  .hc-count.some { color: var(--neon-green); }
-  .hc-names {
-    display: flex; flex-wrap: wrap; gap: 5px;
-  }
+  .hc-count.all  { color: var(--pink); }
+  .hc-count.most { color: var(--orange); }
+  .hc-count.some { color: var(--cyan); }
+  .hc-names { display: flex; flex-wrap: wrap; gap: 5px; }
   .hc-pill {
     font-size: 11px; font-weight: 700;
-    padding: 3px 10px; border-radius: 20px;
-    background: var(--card2);
-    border: 1px solid var(--line);
-    color: var(--ink);
-    letter-spacing: .03em;
+    padding: 3px 10px; border-radius: 2px;
+    border: 2px solid var(--ink);
+    color: var(--ink); background: var(--bg);
+    font-family: 'Righteous', sans-serif;
+    letter-spacing: .04em;
   }
   .hc-duration {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; color: var(--mid);
-    margin-top: 10px;
+    font-size: 10px; color: var(--mid); margin-top: 10px;
   }
-
   .no-hangouts {
-    grid-column: 1/-1;
-    text-align: center;
-    color: var(--mid);
-    font-size: 14px;
-    padding: 24px;
+    grid-column: 1/-1; text-align: center;
+    color: var(--mid); font-size: 14px; padding: 24px;
   }
 
   /* ── MODAL ── */
   .modal-overlay {
     display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,.7); z-index: 100;
+    background: rgba(0,0,0,.5); z-index: 100;
     align-items: center; justify-content: center; padding: 16px;
-    backdrop-filter: blur(4px);
   }
   .modal-overlay.open { display: flex; }
   .modal {
-    background: var(--card);
-    border: 1px solid var(--neon-pink);
-    box-shadow: 0 0 40px rgba(255,45,120,.2);
-    border-radius: 18px; padding: 28px;
+    background: var(--white);
+    border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
+    border-radius: 4px; padding: 28px;
     width: 100%; max-width: 480px; max-height: 85vh;
     overflow-y: auto;
   }
   .modal h2 {
-    font-family: 'Boogaloo', sans-serif;
-    font-size: 26px; letter-spacing: .04em;
-    color: var(--neon-pink);
-    margin-bottom: 6px;
+    font-family: 'Bangers', sans-serif;
+    font-size: 30px; letter-spacing: .05em;
+    color: var(--pink); margin-bottom: 6px;
   }
   .modal-sub { font-size: 13px; color: var(--mid); margin-bottom: 22px; }
 
@@ -404,20 +436,20 @@
     display: block; font-size: 11px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .1em;
     color: var(--mid); margin-bottom: 7px;
+    font-family: 'Righteous', sans-serif;
   }
   .form-group input, .form-group select {
     width: 100%; padding: 10px 13px;
-    background: var(--card2); border: 1px solid var(--line);
-    border-radius: 8px; font-size: 14px; font-family: inherit;
+    background: var(--bg); border: 2px solid var(--ink);
+    border-radius: 3px; font-size: 14px; font-family: inherit;
     color: var(--ink); outline: none; transition: border-color .15s;
   }
-  .form-group input:focus, .form-group select:focus { border-color: var(--neon-cyan); }
-  .form-group select option { background: var(--card2); }
+  .form-group input:focus, .form-group select:focus { border-color: var(--pink); }
 
   .period-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
   .period-item {
-    background: var(--card2); border: 1px solid var(--line);
-    border-radius: 10px; padding: 13px; position: relative;
+    background: var(--bg); border: 2px solid var(--line);
+    border-radius: 4px; padding: 13px; position: relative;
   }
   .period-item .dates-row {
     display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;
@@ -426,34 +458,35 @@
     font-size: 10px; font-weight: 700; color: var(--mid);
     text-transform: uppercase; letter-spacing: .09em;
     display: block; margin-bottom: 5px;
+    font-family: 'Righteous', sans-serif;
   }
   .period-item .btn-remove {
     position: absolute; top: 9px; right: 10px; background: none; border: none;
     font-size: 17px; cursor: pointer; color: var(--mid); line-height: 1; padding: 0;
   }
-  .period-item .btn-remove:hover { color: var(--neon-pink); }
+  .period-item .btn-remove:hover { color: var(--pink); }
 
   .btn-add-period {
-    background: none; border: 2px dashed var(--line); border-radius: 8px;
-    width: 100%; padding: 10px; font-size: 13px; font-weight: 700;
+    background: none; border: 2px dashed var(--line); border-radius: 3px;
+    width: 100%; padding: 10px; font-size: 12px; font-weight: 700;
     color: var(--mid); cursor: pointer; transition: all .15s; font-family: inherit;
-    text-transform: uppercase; letter-spacing: .05em;
+    text-transform: uppercase; letter-spacing: .07em;
   }
-  .btn-add-period:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+  .btn-add-period:hover { border-color: var(--cyan); color: var(--cyan); }
 
   .modal-actions { display: flex; gap: 10px; margin-top: 24px; }
   .btn-save {
-    flex: 1; background: var(--neon-pink); color: #fff; border: none;
-    border-radius: 50px; padding: 13px;
-    font-family: 'Boogaloo', sans-serif; font-size: 18px; letter-spacing: .06em;
-    cursor: pointer; transition: box-shadow .15s;
-    box-shadow: 0 0 16px rgba(255,45,120,.4);
-    text-transform: uppercase;
+    flex: 1; background: var(--pink); color: #fff;
+    border: 3px solid var(--ink);
+    border-radius: 3px; padding: 12px;
+    font-family: 'Bangers', sans-serif; font-size: 20px; letter-spacing: .06em;
+    cursor: pointer; box-shadow: 3px 3px 0 var(--ink);
+    transition: transform .1s, box-shadow .1s; text-transform: uppercase;
   }
-  .btn-save:hover { box-shadow: 0 0 28px rgba(255,45,120,.7); }
+  .btn-save:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
   .btn-cancel {
-    background: none; border: 1px solid var(--line); border-radius: 50px;
-    padding: 13px 20px; font-size: 14px; font-weight: 700;
+    background: none; border: 2px solid var(--line); border-radius: 3px;
+    padding: 12px 20px; font-size: 13px; font-weight: 700;
     cursor: pointer; color: var(--mid); transition: all .15s; font-family: inherit;
   }
   .btn-cancel:hover { border-color: var(--ink); color: var(--ink); }
@@ -464,15 +497,12 @@
     padding: 8px; min-height: 28px;
     font-family: 'IBM Plex Mono', monospace;
   }
-  .status-bar.error  { color: var(--neon-pink); }
-  .status-bar.saving { color: var(--neon-cyan); }
-  .status-bar.ok     { color: var(--neon-green); }
-
-  /* Color inputs in dark mode */
-  input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+  .status-bar.error  { color: var(--pink); }
+  .status-bar.saving { color: var(--cyan); }
+  .status-bar.ok     { color: #16A34A; }
 
   @media (max-width: 600px) {
-    .hero h1 { font-size: 36px; }
+    .hero h1 { font-size: 48px; }
     .gantt-card { padding: 12px; }
     .modal { padding: 20px; }
   }
@@ -482,10 +512,21 @@
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-emoji">😎🌴🗽🌊🎸</div>
-  <h1>Summer in the City</h1>
-  <div class="hero-sub">☀️ Jun 8 – Sep 7, 2026 · New York City ☀️</div>
-  <button class="btn-primary" onclick="openEditModal()">+ Update My Dates</button>
+  <div class="hero-shape1"></div>
+  <div class="hero-shape2"></div>
+  <div class="hero-shape3"></div>
+  <div class="hero-dots">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-emoji">😎 🌴 🗽 🌊 🎸</div>
+    <h1>Summer in the City</h1>
+    <div class="hero-sub">☀️ &nbsp;Jun 8 – Sep 7, 2026 · New York City&nbsp; ☀️</div>
+    <br>
+    <button class="btn-primary" onclick="openEditModal()">+ Update My Dates</button>
+  </div>
 </div>
 
 <div class="wrap">
@@ -505,15 +546,13 @@
     <div class="gantt" id="gantt"></div>
   </div>
 
-  <!-- PEOPLE -->
+  <!-- CREW -->
   <div class="section-title">🏙️ The Crew</div>
   <div class="people-grid" id="people-grid"></div>
 
   <!-- HANGOUTS -->
-  <div class="hangout-section">
-    <div class="section-title">🎉 Plan a Hangout</div>
-    <div class="hangout-grid" id="hangout-grid"></div>
-  </div>
+  <div class="section-title">🎉 Plan a Hangout</div>
+  <div class="hangout-grid" id="hangout-grid"></div>
 
   <div class="status-bar" id="status"></div>
 </div>
@@ -524,7 +563,7 @@
 <div class="modal-overlay" id="edit-overlay" onclick="handleOverlayClick(event,'edit-overlay')">
   <div class="modal">
     <h2 id="modal-title">Update My Dates</h2>
-    <p class="modal-sub">Pick your name, then add any trips away from NYC.</p>
+    <p class="modal-sub">Pick your name and add any trips away from NYC.</p>
 
     <div class="form-group">
       <label>Your name</label>
@@ -561,7 +600,10 @@
   const SUMMER_START = new Date(Date.UTC(2026, 5, 8));
   const SUMMER_END   = new Date(Date.UTC(2026, 8, 7));
   const TOTAL_DAYS   = Math.round((SUMMER_END - SUMMER_START) / 86400000) + 1;
-  const PERSON_COLORS = ['#FF2D78','#00F5FF','#CC44FF','#FF6B00','#FFE600','#39FF14'];
+  const PERSON_COLORS = ['#F0197D','#00C8D4','#7B2FBE','#FF6B1A','#FFE600','#16A34A'];
+
+  // Names pre-seeded (won't add dates by default — awaiting their input)
+  const SEEDED_NAMES = new Set(['Caitlin','Luciana','Geo','Deebs']);
 
   let state = { people: [] };
 
@@ -674,10 +716,9 @@
 
     html += `<div class="gantt-body">`;
 
-    // Person rows
     state.people.forEach(p => {
       html += `<div class="gantt-row">`;
-      html += `<div class="row-label"><div class="row-dot" style="background:${p.color};color:${p.color}"></div>${p.name}</div>`;
+      html += `<div class="row-label"><div class="row-dot" style="background:${p.color}"></div>${p.name}</div>`;
       html += `<div class="row-cells">`;
       if (todayVisible) html += `<div class="today-marker" style="left:${todayPct}%"></div>`;
       for (let i = 0; i < TOTAL_DAYS; i++) {
@@ -696,7 +737,7 @@
 
     // Overlap row
     html += `<div class="gantt-row overlap">`;
-    html += `<div class="row-label" style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.07em">In NYC</div>`;
+    html += `<div class="row-label">In NYC</div>`;
     html += `<div class="row-cells">`;
     if (todayVisible) html += `<div class="today-marker" style="left:${todayPct}%;top:-8px"></div>`;
     for (let i = 0; i < TOTAL_DAYS; i++) {
@@ -708,10 +749,8 @@
       else if (inTown === 3) cls = 'ol3';
       else if (inTown === 2) cls = 'ol2';
       else if (inTown === 1) cls = 'ol1';
-      const names = state.people.filter(p => !isAway(p, i)).map(p => p.name).join(', ');
-      const tt = inTown === 0
-        ? `Everyone's away · ${formatDate(isoFromIndex(i))}`
-        : `${names} in NYC · ${formatDate(isoFromIndex(i))}`;
+      const names = state.people.filter(p => !isAway(p, i)).map(p => p.name).join(', ') || 'Everyone's away';
+      const tt = `${names} · ${formatDate(isoFromIndex(i))}`;
       html += `<div class="day-cell ${cls}" data-tt="${tt}"
         onmouseenter="showTT(event,this)" onmouseleave="hideTT()"></div>`;
     }
@@ -724,16 +763,18 @@
     const el = document.getElementById('people-grid');
     let html = '';
     state.people.forEach(p => {
+      const hasConfirmed = p.away.length > 0 || (p.confirmed === true);
       html += `<div class="person-card">
         <div class="person-card-head">
           <div class="person-name-row">
-            <div class="person-dot" style="background:${p.color};box-shadow:0 0 8px ${p.color}"></div>
+            <div class="person-dot" style="background:${p.color}"></div>
             <span class="person-name">${p.name}</span>
           </div>
           <button class="btn-edit-person" onclick="openEditModal('${p.name}')">Edit</button>
         </div>`;
+
       if (p.away.length === 0) {
-        html += `<p class="no-away">All summer in NYC!</p>`;
+        html += `<span class="status-tag awaiting">⏳ Awaiting dates</span>`;
       } else {
         html += `<ul class="away-list">`;
         p.away.forEach((a, idx) => {
@@ -761,31 +802,29 @@
       return;
     }
 
-    // Build runs of days where >= 3 people are in town (or all if < 3 total)
     const threshold = Math.min(3, total);
     const runs = [];
-    let runStart = null, runNames = null;
+    let runStart = null, runPeople = null;
 
     for (let i = 0; i < TOTAL_DAYS; i++) {
       const inTown = state.people.filter(p => !isAway(p, i));
       if (inTown.length >= threshold) {
-        if (runStart === null) { runStart = i; runNames = new Set(inTown.map(p => p.name)); }
-        else inTown.forEach(p => runNames.add(p.name));
+        if (runStart === null) { runStart = i; runPeople = new Set(inTown.map(p => p.name)); }
+        else inTown.forEach(p => runPeople.add(p.name));
       } else {
         if (runStart !== null) {
-          runs.push({ start: runStart, end: i - 1, names: [...runNames] });
-          runStart = null; runNames = null;
+          runs.push({ start: runStart, end: i - 1, names: [...runPeople] });
+          runStart = null; runPeople = null;
         }
       }
     }
-    if (runStart !== null) runs.push({ start: runStart, end: TOTAL_DAYS - 1, names: [...runNames] });
+    if (runStart !== null) runs.push({ start: runStart, end: TOTAL_DAYS - 1, names: [...runPeople] });
 
     if (runs.length === 0) {
-      el.innerHTML = `<div class="no-hangouts">No windows with 3+ people in town yet — check back as more people add their dates!</div>`;
+      el.innerHTML = `<div class="no-hangouts">No windows with 3+ people in town yet — more dates coming soon!</div>`;
       return;
     }
 
-    // Sort: most people first, then longer runs
     runs.sort((a,b) => b.names.length - a.names.length || (b.end - b.start) - (a.end - a.start));
     const top = runs.slice(0, 9);
 
@@ -794,26 +833,23 @@
       const days = run.end - run.start + 1;
       const isAll = run.names.length === total;
       const countCls = isAll ? 'all' : run.names.length >= 3 ? 'most' : 'some';
-      const countLabel = isAll
-        ? `🔥 EVERYONE IN TOWN`
-        : `${run.names.length} of ${total} in town`;
-      const cardCls = isAll ? 'hangout-card hot' : 'hangout-card';
+      const countLabel = isAll ? '🔥 EVERYONE IN TOWN' : `${run.names.length} of ${total} in town`;
       const startIso = isoFromIndex(run.start);
       const endIso   = isoFromIndex(run.end);
-      const dateLabel = days === 1
-        ? formatDateLong(startIso)
-        : `${formatDate(startIso)} – ${formatDate(endIso)}`;
+      const dateLabel = days === 1 ? formatDateLong(startIso) : `${formatDate(startIso)} – ${formatDate(endIso)}`;
 
-      html += `<div class="${cardCls}">
-        <div class="hc-dates">${dateLabel}</div>
-        <div class="hc-count ${countCls}">${countLabel}</div>
-        <div class="hc-names">`;
+      html += `<div class="${isAll ? 'hangout-card hot' : 'hangout-card'}">
+        <div class="accent-stripe"></div>
+        <div class="hangout-card-inner">
+          <div class="hc-dates">${dateLabel}</div>
+          <div class="hc-count ${countCls}">${countLabel}</div>
+          <div class="hc-names">`;
       run.names.forEach(name => {
         const p = state.people.find(x => x.name === name);
-        html += `<span class="hc-pill" style="border-color:${p?.color||'#fff'};color:${p?.color||'#fff'}">${name}</span>`;
+        html += `<span class="hc-pill">${name}</span>`;
       });
-      html += `</div>
-        <div class="hc-duration">${days} day${days > 1 ? 's' : ''}</div>
+      html += `</div><div class="hc-duration">${days} day${days > 1 ? 's' : ''}</div>
+        </div>
       </div>`;
     });
     el.innerHTML = html;
