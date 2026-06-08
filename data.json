@@ -108,7 +108,39 @@
     {
       "name": "Deebs",
       "color": "#FF6B00",
-      "away": []
+      "away": [
+        {
+          "start": "2026-06-11",
+          "end": "2026-06-16",
+          "label": "Kansas"
+        },
+        {
+          "start": "2026-06-19",
+          "end": "2026-06-21",
+          "label": "Ocean City"
+        },
+        {
+          "start": "2026-07-03",
+          "end": "2026-07-05",
+          "label": "Upstate Kstates"
+        },
+        {
+          "start": "2026-07-10",
+          "end": "2026-07-12",
+          "label": "Hamptons"
+        },
+        {
+          "start": "2026-07-31",
+          "end": "2026-08-02",
+          "label": "LBI"
+        },
+        {
+          "start": "2026-08-19",
+          "end": "2026-08-23",
+          "label": "Ocean City"
+        }
+      ],
+      "confirmed": true
     },
     {
       "name": "Jordy",
