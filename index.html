@@ -861,7 +861,7 @@
       return;
     }
 
-    runs.sort((a,b) => b.names.length - a.names.length || (b.end - b.start) - (a.end - a.start));
+    runs.sort((a,b) => a.start - b.start);
     const top = runs.slice(0, 9);
 
     let html = '';
